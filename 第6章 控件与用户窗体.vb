@@ -658,6 +658,829 @@ Private Sub UserForm_Initialize()
     Set Img = Nothing
 End Sub
 
+' 89-4 在Listview控件中排序
+Option Explicit
+Private Sub ListView1_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
+    With ListView1
+        .Sorted = True
+        .SortOrder = (.SortOrder + 1) Mod 2 '在设置SortOrder属性值时，使用Mod运算符以达到第一次排序以降序排序，再次排序时以升序排序，交替进行的效果。
+        .SortKey = ColumnHeader.Index - 1
+    End With
+End Sub
+Private Sub UserForm_Initialize()
+    Dim Itm As ListItem
+    Dim i As Integer
+    Dim c As Integer
+    With ListView1
+        .ColumnHeaders.Add , , "人员编号 ", 50, 0
+        .ColumnHeaders.Add , , "技能工资 ", 50, 1
+        .ColumnHeaders.Add , , "岗位工资 ", 50, 1
+        .ColumnHeaders.Add , , "工龄工资 ", 50, 1
+        .ColumnHeaders.Add , , "浮动工资 ", 50, 1
+        .ColumnHeaders.Add , , "其他  ", 50, 1
+        .ColumnHeaders.Add , , "应发合计", 50, 1
+        .View = lvwReport
+        .Gridlines = True
+        .FullRowSelect = True
+        For i = 2 To Cells(Rows.Count, 1).End(xlUp).Row - 1
+            Set Itm = .ListItems.Add()
+            Itm.Text = Space(2) & Cells(i, 1)
+            For c = 1 To 6
+                Itm.SubItems(c) = Format(Cells(i, c + 1), "##,#,0.00")
+            Next
+        Next
+    End With
+    Set Itm = Nothing
+End Sub
+
+' 89-5 Listview控件的图标设置
+Option Explicit
+Private Sub UserForm_Initialize()
+    Dim ITM As ListItem
+    Dim i As Integer
+    With ListView1
+        .View = lvwIcon '视图样式
+        .Icons = ImageList1
+        For i = 2 To 6
+            Set ITM = .ListItems.Add()
+            ITM.Text = Cells(i, 1)
+            ITM.Icon = i - 1
+        Next
+    End With
+    Set ITM = Nothing
+End Sub
+
+Option Explicit
+Private Sub UserForm_Initialize()
+    Dim ITM As ListItem
+    Dim i As Integer
+    With ListView1
+        .View = lvwSmallIcon
+        .SmallIcons = ImageList1
+        For i = 2 To 6
+            Set ITM = .ListItems.Add()
+            ITM.Text = Cells(i, 1)
+            ITM.SmallIcon = i - 1
+        Next
+    End With
+    Set ITM = Nothing
+End Sub
+
+Option Explicit
+Private Sub UserForm_Initialize()
+    Dim ITM As ListItem
+    Dim i As Integer
+    With ListView1
+        .View = lvwList
+        .SmallIcons = ImageList1
+        For i = 2 To 6
+            Set ITM = .ListItems.Add()
+            ITM.Text = Cells(i, 1)
+            ITM.SmallIcon = i - 1
+        Next
+    End With
+    Set ITM = Nothing
+End Sub
+
+Option Explicit
+Private Sub UserForm_Initialize()
+    Dim ITM As ListItem
+    Dim i As Integer
+    Dim c As Integer
+    With ListView1
+        .ColumnHeaders.Add , , "人员编号 ", 70, 0
+        .ColumnHeaders.Add , , "技能工资 ", 70, 1
+        .ColumnHeaders.Add , , "岗位工资 ", 70, 1
+        .View = lvwReport
+        .Gridlines = True
+        .SmallIcons = ImageList1
+        For i = 2 To 6
+            Set ITM = .ListItems.Add()
+            ITM.Text = Cells(i, 1)
+            ITM.SmallIcon = i - 1
+            For c = 1 To 2
+                ITM.SubItems(c) = Format(Cells(i, c + 1), "##,#,0.00")
+            Next
+        Next
+    End With
+    Set ITM = Nothing
+End Sub
+
+' 范例90 使用Toolbar控件添加工具栏
+Option Explicit
+Private Sub Toolbar1_ButtonClick(ByVal Button As MSComctlLib.Button)
+    MsgBox Button.Caption
+End Sub
+Private Sub UserForm_Initialize()
+    Dim arr As Variant
+    Dim i As Byte
+    arr = Array(" 录入 ", " 审核", " 记账 ", " 结账 ", "负债表", "损益表")
+    With Toolbar1
+        .ImageList = ImageList1
+        .Appearance = ccFlat
+        .BorderStyle = ccNone
+        .TextAlignment = tbrTextAlignBottom
+        With .Buttons
+            .Add(1, , "").Style = tbrPlaceholder
+            For i = 0 To UBound(arr)
+                .Add(i + 2, , , , i + 1).Caption = arr(i)
+            Next
+        End With
+    End With
+End Sub
+
+' 范例91 使用StatusBar控件添加状态栏
+Option Explicit
+Private Sub TextBox1_Change()
+    StatusBar1.Panels(1).Text = "正在输入：" & TextBox1.Text
+End Sub
+Private Sub UserForm_Initialize()
+    Dim Pal As Panel
+    Dim arr1 As Variant
+    Dim arr2 As Variant
+    Dim i As Integer
+    arr1 = Array(0, 6, 5)
+    arr2 = Array(180, 60, 54)
+    StatusBar1.Width = 294
+    For i = 1 To 3
+        Set Pal = StatusBar1.Panels.Add()
+        With Pal
+            .Style = arr1(i - 1)
+            .Width = arr2(i - 1)
+            .Alignment = i - 1
+        End With
+    Next
+    StatusBar1.Panels(1).Text = "准备就绪!"
+End Sub
+
+' 范例92 使用AniGif控件显示GIF图片
+Option Explicit
+Private Sub CommandButton1_Click()
+    AniGif1.Stretch = True
+    AniGif1.Filename = ThisWorkbook.Path & "\001.gif"
+End Sub
+Private Sub CommandButton2_Click()
+    Unload Me
+End Sub
+
+' 范例93 使用ShockwaveFlash控件播放Flash文件
+Option Explicit
+Private Sub CommandButton1_Click()
+    With ShockwaveFlash1
+        .Movie = ThisWorkbook.Path & "\001.swf"
+        .EmbedMovie = False
+        .Menu = False
+        .ScaleMode = 2
+    End With
+End Sub
+Private Sub CommandButton2_Click()
+    ShockwaveFlash1.Play
+End Sub
+Private Sub CommandButton3_Click()
+    ShockwaveFlash1.Forward
+End Sub
+Private Sub CommandButton4_Click()
+    ShockwaveFlash1.Stop
+End Sub
+Private Sub CommandButton5_Click()
+    ShockwaveFlash1.Back
+End Sub
+Private Sub CommandButton6_Click()
+    ShockwaveFlash1.Movie = " "
+End Sub
+Private Sub CommandButton7_Click()
+    Unload Me
+End Sub
+
+' 范例94 注册自定义控件
+Option Explicit
+Sub Regsvrs()
+    Dim SouFile As String
+    Dim DesFile As String
+    On Error Resume Next
+    SouFile = ThisWorkbook.Path & "\VBAniGIF.OCX"
+    DesFile = "C:\Windows\system32\VBAniGIF.OCX"
+    FileCopy SouFile, DesFile
+    Shell "REGSVR32 /s " & DesFile
+    MsgBox "AniGif控件已成功注册，现在可以使用了!"
+End Sub
+Sub Regsvru()
+    Shell "REGSVR32 /u C:\Windows\system32\VBAniGIF.OCX"
+End Sub
+
+' 范例95 不打印工作表中的控件
+
+' 范例96 遍历控件的方法
+Option Explicit
+Private Sub CommandButton1_Click()
+    Dim i As Integer
+    For i = 1 To 3
+        Me.Controls("TextBox" & i) = ""
+    Next
+End Sub
+
+Option Explicit
+Sub ClearText()
+    Dim i As Integer
+    For i = 1 To 4
+        Sheet1.OLEObjects("TextBox" & i).Object.Text = ""
+    Next
+End Sub
+Sub FormShow()
+    UserForm1.Show
+End Sub
+
+' 96-2 使用对象类型
+Option Explicit
+Sub ClearText()
+    Dim Obj As OLEObject
+    For Each Obj In Sheet1.OLEObjects '遍历
+        If TypeName(Obj.Object) = "TextBox" Then
+            Obj.Object.Text = ""
+        End If
+    Next
+    Set Obj = Nothing
+End Sub
+Option Explicit
+Private Sub CommandButton1_Click()
+    Dim Ctr As Control
+    For Each Ctr In Me.Controls
+        If TypeName(Ctr) = "TextBox" Then
+            Ctr = ""
+        End If
+    Next
+    Set Ctr = Nothing
+End Sub
+
+' 96-3 使用程序标识符
+Option Explicit
+Sub ClearText()
+    Dim Obj As OLEObject
+    For Each Obj In Sheet1.OLEObjects
+        If Obj.progID = "Forms.TextBox.1" Then '程序标识符
+            Obj.Object.Text = ""
+        End If
+    Next
+    Set Obj = Nothing
+End Sub
+
+' 96-4 使用FormControlType属性
+Option Explicit
+Sub ControlType()
+    Dim MyShape As Shape
+    For Each MyShape In Sheet1.Shapes
+        If MyShape.Type = msoFormControl Then
+            If MyShape.FormControlType = xlCheckBox Then
+                MyShape.ControlFormat.Value = 1
+            End If
+        End If
+    Next
+    Set MyShape = Nothing
+End Sub
+
+' 范例97 使用程序代码添加控件
+Option Explicit
+Sub AddButton()
+    Dim MyButton As Button
+    On Error Resume Next
+    Sheet1.Shapes("MyButton").Delete
+    Set MyButton = Sheet1.Buttons.Add(60, 40, 100, 30) '直接添加
+    With MyButton
+        .Name = "MyButton"
+        .Font.Size = 12
+        .Font.ColorIndex = 5
+        .Characters.Text = "新建的按钮"
+        .OnAction = "MyButton"
+    End With
+    Set MyButton = Nothing
+End Sub
+Sub MyButton()
+    MsgBox "这是使用Add方法新建的按钮!"
+End Sub
+
+' 97-2 使用AddFormControl方法添加表单控件
+Option Explicit
+Sub AddButton()
+    Dim MyShape As Shape
+    On Error Resume Next
+    Sheet1.Shapes("MyButton").Delete
+    Set MyShape = Sheet1.Shapes.AddFormControl(0, 60, 40, 100, 30)
+    With MyShape
+        .Name = "MyButton"
+        With .TextFrame.Characters
+            .Font.ColorIndex = 3
+            .Font.Size = 12
+            .Text = "新建的按钮"
+        End With
+        .OnAction = "MyButton"
+    End With
+    Set MyShape = Nothing
+End Sub
+Sub MyButton()
+    MsgBox "这是使用AddFormControl方法新建的按钮!"
+End Sub
+
+' 97-3 使用Add方法添加ActiveX控件
+Option Explicit
+Sub AddButton()
+    Dim Obj As New OLEObject
+    On Error Resume Next
+    Sheet1.OLEObjects("MyButton").Delete
+    Set Obj = Sheet1.OLEObjects.Add(ClassType:="Forms.CommandButton.1", _
+            Left:=60, Top:=40, Width:=100, Height:=30)
+    With Obj
+        .Name = "MyButton"
+        .Object.Caption = "新建的按钮"
+        .Object.Font.Size = 12
+        .Object.ForeColor = &HFF&
+    End With
+    With ActiveWorkbook.VBProject.VBComponents(Sheet1.CodeName).CodeModule
+        If .Lines(1, 1) <> "Option Explicit" Then
+            .InsertLines 1, "Option Explicit"
+        End If
+        If .Lines(2, 1) = "Private Sub MyButton_Click()" Then Exit Sub
+        .InsertLines 2, "Private Sub MyButton_Click()"
+        .InsertLines 3, vbTab & "MsgBox ""这是使用Add方法新建的按钮!"""
+        .InsertLines 4, "End Sub"
+    End With
+    Set Obj = Nothing
+End Sub
+
+' 97-4 使用AddOLEObject方法添加ActiveX控件
+Option Explicit
+Sub AddButton()
+    Dim MyButton As Shape
+    On Error Resume Next
+    Sheet1.Shapes("MyButton").Delete
+    Set MyButton = Sheet1.Shapes.AddOLEObject( _
+        ClassType:="Forms.CommandButton.1", _
+        Left:=60, Top:=40, Width:=100, Height:=30)
+    MyButton.Name = "MyButton"
+    With ActiveWorkbook.VBProject.VBComponents(Sheet1.CodeName).CodeModule
+        If .Lines(1, 1) <> "Option Explicit" Then
+            .InsertLines 1, "Option Explicit"
+        End If
+        If .Lines(2, 1) = "Private Sub MyButton_Click()" Then Exit Sub
+        .InsertLines 2, "Private Sub MyButton_Click()"
+        .InsertLines 3, vbTab & "MsgBox ""这是使用AddOLEObject方法新建的按钮!"""
+        .InsertLines 4, "End Sub"
+    End With
+    Set MyButton = Nothing
+End Sub
+
+' 范例98 禁用用户窗体的关闭按钮
+Option Explicit
+Private Sub CommandButton1_Click()
+    Unload Me
+End Sub
+Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
+    If CloseMode = 0 Then '如果是从界面上关闭的，则取消这个操作
+        Cancel = True
+        MsgBox "请点击""关闭""按钮关闭用户窗体!"
+    End If
+End Sub
+
+' 范例99 屏蔽用户窗体的关闭按钮
+' 只能在32位上运行
+Option Explicit
+Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function DrawMenuBar Lib "user32" (ByVal Hwnd As Long) As Long
+Private Const GWL_STYLE = (-16)
+Private Const WS_SYSMENU = &H80000
+Private Hwnd As Long
+Private Sub UserForm_Initialize()
+    Dim Istype As Long
+    Hwnd = FindWindow("ThunderDFrame", Me.Caption)
+    Istype = GetWindowLong(Hwnd, GWL_STYLE)
+    Istype = Istype And Not WS_SYSMENU
+    SetWindowLong Hwnd, GWL_STYLE, Istype
+    DrawMenuBar Hwnd
+End Sub
+Private Sub CommandButton1_Click()
+    Unload Me
+End Sub
+
+' 范例100 为用户窗体添加图标
+' 只能在32位上运行
+Option Explicit
+Dim hwnd As Long
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageA" (ByVal hwnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Private Declare Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+Private Const WM_SETICON = &H80
+Private Const ICON_SMALL = 0&
+Private Const ICON_BIG = 1&
+Sub ChangeIcon(ByVal hwnd As Long, Optional ByVal hIcon As Long = 0&) '改变窗体图标
+    SendMessage hwnd, WM_SETICON, ICON_SMALL, ByVal hIcon
+    SendMessage hwnd, WM_SETICON, ICON_BIG, ByVal hIcon
+    DrawMenuBar hwnd
+End Sub
+Private Sub UserForm_Initialize()
+    hwnd = FindWindow(vbNullString, Me.Caption) '获得窗口句柄
+    Call ChangeIcon(hwnd, Image1.Picture.Handle)
+End Sub
+
+' 范例101 为用户窗体添加最大最小化按纽
+' 只能在32位上运行
+Option Explicit
+Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Const WS_MAXIMIZEBOX = &H10000
+Private Const WS_MINIMIZEBOX = &H20000
+Private Const GWL_STYLE = (-16)
+Private Sub UserForm_Initialize()
+    Dim hWndForm As Long
+    Dim iStyle As Long
+    hWndForm = FindWindow("ThunderDFrame", Me.Caption)
+    iStyle = GetWindowLong(hWndForm, GWL_STYLE)
+    iStyle = iStyle Or WS_MINIMIZEBOX
+    iStyle = iStyle Or WS_MAXIMIZEBOX
+    SetWindowLong hWndForm, GWL_STYLE, iStyle
+End Sub
+
+' 范例102 屏蔽用户窗体的标题栏和边框
+' 只能在32位上运行
+Option Explicit
+Private Declare Function DrawMenuBar Lib "user32" (ByVal Hwnd As Long) As Long
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal Hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+Private Const GWL_STYLE As Long = (-16)
+Private Const GWL_EXSTYLE = (-20)
+Private Const WS_CAPTION As Long = &HC00000
+Private Const WS_EX_DLGMODALFRAME = &H1&
+Private Sub UserForm_Initialize()
+    Dim IStyle As Long
+    Dim Hwnd As Long
+    If Val(Application.Version) < 9 Then
+        Hwnd = FindWindow("ThunderXFrame", Me.Caption)
+    Else
+        Hwnd = FindWindow("ThunderDFrame", Me.Caption)
+    End If
+    IStyle = GetWindowLong(Hwnd, GWL_STYLE)
+    IStyle = IStyle And Not WS_CAPTION
+    SetWindowLong Hwnd, GWL_STYLE, IStyle
+    DrawMenuBar Hwnd
+    IStyle = GetWindowLong(Hwnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
+    SetWindowLong Hwnd, GWL_EXSTYLE, IStyle
+End Sub
+Private Sub CommandButton1_Click()
+    Unload Me
+End Sub
+
+' 范例103 显示透明的用户窗体
+' 只能在32位上运行
+Option Explicit
+Private Declare Function GetActiveWindow Lib "user32" () As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hWndForm As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hWndForm As Long, ByVal nIndex As Long) As Long
+Private Declare Function SetLayeredWindowAttributes Lib "user32" (ByVal hWndForm As Long, ByVal crKey As Integer, ByVal bAlpha As Integer, ByVal dwFlags As Long) As Long
+Private Const WS_EX_LAYERED = &H80000
+Private Const LWA_COLORKEY = &H1
+Private Const LWA_ALPHA = &H2
+Private Const GWL_EXSTYLE = &HFFEC
+Dim hWndForm As Long
+Private Sub UserForm_Activate()
+    Dim nIndex As Long
+    hWndForm = GetActiveWindow
+    nIndex = GetWindowLong(hWndForm, GWL_EXSTYLE)
+    SetWindowLong hWndForm, GWL_EXSTYLE, nIndex Or WS_EX_LAYERED
+    SetLayeredWindowAttributes hWndForm, 0, (255 * 60) / 100, LWA_ALPHA
+End Sub
+
+' 范例104 为用户窗体添加菜单
+' 只能在32位上运行
+Option Explicit
+Public PreWinProc As Long, hwnd As Long
+Public Declare Function CheckMenuRadioItem Lib "user32" (ByVal hMenu As Long, ByVal un1 As Long, ByVal un2 As Long, ByVal un3 As Long, ByVal un4 As Long) As Long
+Public Declare Function CheckMenuItem Lib "user32" (ByVal hMenu As Long, ByVal wIDCheckItem As Long, ByVal wCheck As Long) As Long
+Public Declare Function EnableMenuItem Lib "user32" (ByVal hMenu As Long, ByVal wIDEnableItem As Long, ByVal wEnable As Long) As Long
+Public Const MF_UNCHECKED = &H0&
+Public Const MF_CHECKED = &H8&
+Public Const MF_DISABLED = &H2&
+Public Const MF_GRAYED = &H1&
+Public Const MF_ENABLED = &H0&
+Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hwnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function GetMenu Lib "user32" (ByVal hwnd As Long) As Long
+Private Declare Function GetSubMenu Lib "user32" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Private Const MF_BYCOMMAND = &H0&
+Public Function MsgProcess(ByVal hwnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+    Dim SubMenu_hWnd As Long
+    Select Case wParam
+        Case 100
+            MsgBox "你选择的是""保存""按钮!"
+        Case 101
+            MsgBox "你选择的是""备份""按钮!"
+        Case 102
+            Unload UserForm1
+        Case 110
+            MsgBox "你选择的是""录入""按钮!"
+        Case 111
+            MsgBox "你选择的是""审核""按钮!"
+        Case 112
+            MsgBox "你选择的是""记账""按钮!"
+        Case 113
+            MsgBox "你选择的是""结账""按钮!"
+        Case 114
+            MsgBox "你选择的是""资产负债表""按钮!"
+        Case 115
+            MsgBox "你选择的是""损益表""按钮!"
+        Case Else
+            MsgProcess = CallWindowProc(PreWinProc, hwnd, Msg, wParam, lParam)
+    End Select
+End Function
+
+' 范例105 自定义用户窗体的鼠标指针类型
+Option Explicit
+Private Sub UserForm_Initialize()
+    Me.MousePointer = 99
+    Me.MouseIcon = LoadPicture(ThisWorkbook.Path & "\myMouse.ico")
+End Sub
+
+' 范例106 用户窗体的打印
+Option Explicit
+Private Sub CommandButton6_Click() '退出按钮
+    Unload Me
+End Sub
+Private Sub CommandButton7_Click() '打印按钮
+    Dim myHeight As Integer
+    With UserForm1
+        myHeight = .Height
+        .Frame1.Visible = False
+        .Height = myHeight - 30
+        .PrintForm '打印
+        .Height = myHeight
+        .Frame1.Visible = True
+    End With
+End Sub
+
+' 范例107 设置用户窗体的显示位置
+
+' 107-1 调整用户窗体的显示位置
+Option Explicit
+Private Sub UserForm_Initialize()
+' The Me keyword behaves like an implicitly declared variable. 
+' It is automatically available to every procedure in a class module.
+    With Me 
+        .StartUpPosition = 0
+        .Left = 25
+        .Top = 75
+    End With
+End Sub
+
+' 107-2 由活动单元格确定显示位置
+Option Explicit
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+    Dim CellX As Integer
+    Dim CellY As Integer
+    CellX = ExecuteExcel4Macro("GET.CELL(42)")
+    CellY = ExecuteExcel4Macro("GET.CELL(43)")
+    With UserForm1
+        .Show 0
+        .Left = CellX
+        .Top = CellY + 60
+    End With
+End Sub
+
+' 范例108 用户窗体的全屏显示
+
+' 108-1 设置用户窗体的大小为应用程序的大小
+Option Explicit
+Private Sub UserForm_Initialize()
+    With Application
+        .WindowState = xlMaximized
+        Width = .Width
+        Height = .Height
+        Left = .Left
+        Top = .Top
+    End With
+End Sub
+
+' 108-2 根据屏幕分辨率设置
+' 只能在32位上运行
+Option Explicit
+Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+Const SM_CXSCREEN As Long = 0
+Const SM_CYSCREEN As Long = 1
+Private Sub UserForm_Initialize()
+    With Me
+        .Height = GetSystemMetrics(SM_CYSCREEN) * 0.75
+        .Width = GetSystemMetrics(SM_CXSCREEN) * 0.75
+        .Left = 0
+        .Top = 0
+    End With
+End Sub
+
+' 范例109 在用户窗体中显示图表
+
+' 109-1 使用Export方法显示图表
+Option Explicit
+Private Sub UserForm_Initialize()
+    Dim myChart As Chart
+    Dim str As String
+    Set myChart = Sheets("Sheet2").ChartObjects(1).Chart
+    str = ThisWorkbook.Path & "\Temp.gif"
+    myChart.Export Filename:=str, FilterName:="GIF"
+    Image1.Picture = LoadPicture(str)
+  End Sub
+Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
+    Kill ThisWorkbook.Path & "\Temp.gif"
+End Sub
+
+' 109-2 使用API函数显示图表
+Option Explicit
+Private Declare Function CreateStreamOnHGlobal Lib "ole32" (ByVal hGlobal As Long, ByVal fDeleteOnRelease As Long, ppstm As Any) As Long
+Private Declare Function OleLoadPicture Lib "olepro32" (pStream As Any, ByVal lSize As Long, ByVal fRunmode As Long, riid As Any, ppvObj As Any) As Long
+Private Declare Function CLSIDFromString Lib "ole32" (ByVal lpsz As Any, pclsid As Any) As Long
+Private Declare Function GlobalLock Lib "kernel32" (ByVal hMem As Long) As Long
+Private Declare Function GlobalUnlock Lib "kernel32" (ByVal hMem As Long) As Long
+Private Declare Function GlobalSize Lib "kernel32" (ByVal hMem As Long) As Long
+Private Declare Function OpenClipboard Lib "user32" (ByVal hwnd As Long) As Long
+Private Declare Function CloseClipboard Lib "user32" () As Long
+Private Declare Function GetClipboardData Lib "user32" (ByVal wFormat As Long) As Long
+Private Declare Function EmptyClipboard Lib "user32" () As Long
+Private Declare Function EnumClipboardFormats Lib "user32" (ByVal wFormat As Long) As Long
+Private Declare Function GetClipboardFormatName Lib "user32" Alias "GetClipboardFormatNameA" (ByVal wFormat As Long, ByVal lpString As String, ByVal nMaxCount As Long) As Long
+Public Function LoadShapePicture(shp As Object) As IPictureDisp
+    Dim nClipsize As Long
+    Dim hMem As Long
+    Dim lpData As Long
+    Dim sdata() As Byte
+    Dim fmt As Long
+    Dim fmtName As String
+    Dim iClipBoardFormatNumber As Long
+    Dim IID_IPicture(15)
+    Dim istm As stdole.IUnknown
+    If TypeName(shp) = "ChartObject" Then
+        shp.CopyPicture xlPrinter
+        Sheet1.Paste
+        Selection.Cut
+    Else
+        shp.Copy
+    End If
+    OpenClipboard 0&
+    If iClipBoardFormatNumber = 0 Then
+        fmt = EnumClipboardFormats(0)
+        Do While fmt <> 0
+            fmtName = Space(255)
+            GetClipboardFormatName fmt, fmtName, 255
+            fmtName = Trim(fmtName)
+            If fmtName <> "" Then
+                fmtName = Left(fmtName, Len(fmtName) - 1)
+                If fmtName = "GIF" Then
+                    iClipBoardFormatNumber = fmt
+                    Exit Do
+                End If
+            End If
+            fmt = EnumClipboardFormats(fmt)
+         Loop
+    End If
+    hMem = GetClipboardData(iClipBoardFormatNumber)
+    If CBool(hMem) Then
+        nClipsize = GlobalSize(hMem)
+        lpData = GlobalLock(hMem)
+        GlobalUnlock hMem
+        If CreateStreamOnHGlobal(hMem, 1, istm) = 0 Then
+            If CLSIDFromString(StrPtr("{7BF80980-BF32-101A-8BBB-00AA00300CAB}"), IID_IPicture(0)) = 0 Then
+                Call OleLoadPicture(ByVal ObjPtr(istm), nClipsize, 0, IID_IPicture(0), LoadShapePicture)
+            End If
+        End If
+    End If
+    EmptyClipboard
+    CloseClipboard
+End Function
+Private Sub UserForm_Initialize()
+    Image1.Picture = LoadShapePicture(Sheet2.ChartObjects(1))
+End Sub
+
+' 范例110 用户窗体运行时调整控件大小
+Option Explicit
+Dim Abscissa As Single
+Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+    Abscissa = x
+End Sub
+Private Sub Image1_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal x As Single, ByVal y As Single)
+    If Button = 1 Then
+        If Abscissa - x > Frame1.Width Or x > Frame2.Width Then Exit Sub
+        Frame1.Width = Frame1.Width - Abscissa + x
+        Image1.Left = Image1.Left - Abscissa + x
+        Frame2.Left = Frame2.Left - Abscissa + x
+        Frame2.Width = Frame2.Width + Abscissa - x
+    End If
+End Sub
+
+' 范例111 使用代码添加用户窗体及控件
+Option Explicit
+Sub CreatingForms()
+    Dim MyForm As VBComponent
+    Dim MyTextBox As Control
+    Dim MyButton As Control
+    Dim i As Integer
+    On Error Resume Next
+    Set MyForm = ThisWorkbook.VBProject.VBComponents.Add(vbext_ct_MSForm)
+    With MyForm
+        .Properties("Name") = "Formtest"
+        .Properties("Caption") = "演示窗体"
+        .Properties("Height") = "180"
+        .Properties("Width") = "240"
+        Set MyTextBox = .Designer.Controls.Add("Forms.CommandButton.1")
+        With MyTextBox
+            .Name = "MyTextBox"
+            .Caption = "新建文本框"
+            .Top = 40
+            .Left = 138
+            .Height = 20
+            .Width = 70
+        End With
+        Set MyButton = .Designer.Controls.Add("Forms.CommandButton.1")
+        With MyButton
+            .Name = "MyButton"
+            .Caption = "删除文本框"
+            .Top = 70
+            .Left = 138
+            .Height = 20
+            .Width = 70
+        End With
+        With .CodeModule
+            i = .CreateEventProc("Click", "MyTextBox")
+            .ReplaceLine i + 1, Space(4) & "Dim MyTextBox As Control" & vbCrLf & Space(4) & "Dim i As Integer" & vbCrLf & Space(4) & "Dim k As Integer" _
+                & vbCrLf & Space(4) & "k = 10" & vbCrLf & Space(4) & "For i = 1 To 5" & vbCrLf & Space(8) & "Set MyTextBox = Me.Controls.Add(bstrprogid:=""Forms.TextBox.1"")" _
+                & vbCrLf & Space(8) & "With MyTextBox" & vbCrLf & Space(12) & ".Name = ""MyTextBox"" & i" & vbCrLf & Space(12) & ".Left = 20" _
+                & vbCrLf & Space(12) & ".Top = k" & vbCrLf & Space(12) & ".Height = 18" & vbCrLf & Space(12) & ".Width = 80" _
+                & vbCrLf & Space(12) & "k = .Top + 28" & vbCrLf & Space(8) & "End With" & vbCrLf & Space(4) & "Next"
+            i = .CreateEventProc("Click", "MyButton")
+            .ReplaceLine i + 1, Space(4) & "Dim i As Integer" & vbCrLf & Space(4) & "On Error Resume Next" & vbCrLf & Space(4) & "For i = 1 To 5" & vbCrLf & Space(8) & "Me.Controls.Remove ""MyTextBox"" & i" & vbCrLf & Space(4) & "Next"
+        End With
+    End With
+    Set MyForm = Nothing
+    Set MyTextBox = Nothing
+    Set MyButton = Nothing
+End Sub
+
+' 范例112 以非模式显示用户窗体
+Option Explicit
+Sub vbModelessProgressBar()
+    Dim r As Integer
+    Dim i As Integer
+    With Sheet1
+        r = .Cells(.Rows.Count, 1).End(xlUp).Row
+        UserForm1.Show 0
+        With UserForm1.ProgressBar1
+            .Min = 1
+            .Max = r
+            .Scrolling = 0
+        End With
+        For i = 1 To r
+            .Cells(i, 3) = Round(.Cells(i, 1) * .Cells(i, 2), 2)
+            Application.Goto Reference:=.Cells(i, 1), Scroll:=True
+            UserForm1.ProgressBar1.Value = i
+            UserForm1.Caption = "程序正在运行,已完成" & Format((i / r) * 100, "0.00") & "%,请稍候!"
+        Next
+    End With
+    Unload UserForm1
+End Sub
+Sub vbModelProgressBar()
+    Dim r As Integer
+    Dim i As Integer
+    With Sheet1
+        r = .Cells(.Rows.Count, 1).End(xlUp).Row
+        UserForm1.Show
+        With UserForm1.ProgressBar1
+            .Min = 1
+            .Max = r
+            .Scrolling = 0
+        End With
+        For i = 1 To r
+            .Cells(i, 3) = Round(.Cells(i, 1) * .Cells(i, 2), 2)
+            Application.Goto Reference:=.Cells(i, 1), Scroll:=True
+            UserForm1.ProgressBar1.Value = i
+            UserForm1.Caption = "程序正在运行,已完成" & Format((i / r) * 100, "0.00") & "%,请稍候!"
+        Next
+    End With
+    Unload UserForm1
+End Sub
+
+
+
+
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
